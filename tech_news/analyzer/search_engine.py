@@ -30,7 +30,9 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_tag(tag):
-    """Seu código deve vir aqui"""
+    news_list = search_news({"tags": {"$regex": tag, "$options": "i"}})
+    news = get_news_tuples(news_list)
+    return news
 
 
 # Requisito 9
