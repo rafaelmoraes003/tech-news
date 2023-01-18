@@ -1,6 +1,7 @@
 import requests
 from parsel import Selector
 from time import sleep
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -21,12 +22,12 @@ def fetch(url):
 def scrape_updates(html_content):
     selector = Selector(text=html_content)
 
-    news_list = [
+    news_urls = [
         news.css("a::attr(href)").get()
         for news in selector.css("#content article")
     ]
 
-    return news_list
+    return news_urls
 
 
 # Requisito 3
@@ -65,13 +66,26 @@ def scrape_news(html_content):
     return news
 
 
-html_content = fetch(
-    "https://blog.betrybe.com/tecnologia/mark-zuckerberg-metaverso/"
-)
-news = scrape_news(html_content)
-print(news)
-
-
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    url = "https://blog.betrybe.com/"
+    news = []
+
+    i = 0
+
+    while len(news) < amount:
+        html_content = fetch(url)
+        news_urls = scrape_updates(html_content)
+
+        try:
+            news.append(scrape_news(fetch(news_urls[i])))
+            i += 1
+        except IndexError:
+            url = scrape_next_page_link(html_content)
+            i = 0
+
+    create_news(news)
+    return news
+
+
+print(get_tech_news(13))
