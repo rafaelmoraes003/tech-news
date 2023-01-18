@@ -39,7 +39,37 @@ def scrape_next_page_link(html_content):
 
 # Requisito 4
 def scrape_news(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+
+    news = {}
+
+    news["url"] = selector.css("link[rel=canonical]::attr(href)").get()
+    news["title"] = selector.css(".entry-title::text").get().strip()
+    news["timestamp"] = selector.css(".meta-date::text").get()
+    news["writer"] = selector.css(".author a::text").get()
+
+    comments_count = selector.css(".post-comments .title-block::text").get()
+    news["comments_count"] = (
+        int(comments_count.strip().split(" ")[0]) if comments_count else 0
+    )
+
+    news["summary"] = "".join(
+        selector.css(".entry-content > p:first-of-type *::text").getall()
+    ).strip()
+
+    tags = selector.css(".post-tags ul li a::text").getall()
+    news["tags"] = tags if tags else []
+
+    news["category"] = selector.css(".entry-details span.label::text").get()
+
+    return news
+
+
+html_content = fetch(
+    "https://blog.betrybe.com/tecnologia/mark-zuckerberg-metaverso/"
+)
+news = scrape_news(html_content)
+print(news)
 
 
 # Requisito 5
