@@ -21,7 +21,7 @@
 
 ###
 
-Clone the application using the `git clone` command. After that, enter the project folder using the command `cd-tech-news`.
+Clone the application using the `git clone` command. After that, enter the project folder using the command `cd tech-news`.
 
 ###
 
